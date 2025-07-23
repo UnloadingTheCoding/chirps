@@ -20,11 +20,12 @@ func main() {
 		Handler: mux,
 	}
 
-	mux.Handle("/app/", http.StripPrefix("/app/", apiCfg.middlewareMetricsInc(http.FileServer(http.Dir(".")))))
-	mux.Handle("/assets", http.FileServer(http.Dir("./logo.png")))
-	mux.HandleFunc("/healthz", handlers.Healthzhandler)
-	mux.HandleFunc("/metrics", apiCfg.hitCount)
-	mux.HandleFunc("/reset", apiCfg.resetCount)
+	mux.Handle("GET /app/", http.StripPrefix("/app/", apiCfg.middlewareMetricsInc(http.FileServer(http.Dir(".")))))
+	mux.Handle("GET /assets/", http.FileServer(http.Dir("./logo.png")))
+	mux.HandleFunc("GET /api/healthz", handlers.Healthzhandler)
+	mux.HandleFunc("GET /admin/metrics", apiCfg.hitCount)
+	mux.HandleFunc("POST /admin/reset", apiCfg.resetCount)
+	mux.HandleFunc("POST /api/validate_chirp", ValidateChirp)
 
 	err := srv.ListenAndServe()
 

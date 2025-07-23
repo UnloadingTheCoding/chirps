@@ -13,9 +13,9 @@ func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
 }
 
 func (cfg *apiConfig) hitCount(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Type", "text/html")
 	var b []byte
-	b = fmt.Appendf(b, "Hits: %v", cfg.fileserverHits.Load())
+	b = fmt.Appendf(b, "<html> <body><h1>Welcome, Chirpy Admin</h1><p>Chirpy has been visited %d times!</p></body></html>", cfg.fileserverHits.Load())
 	w.Write(b)
 }
 
