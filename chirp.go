@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"slices"
+	"strings"
 )
 
 type Chirp struct {
@@ -14,24 +16,27 @@ func ValidateChirp(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&c)
 
-	resBody := make(map[string]interface{})
-
 	if err != nil {
-		resBody["error"] = "Something went wrong"
-		res, _ := json.Marshal(resBody)
-		w.WriteHeader(400)
-		w.Write(res)
+		respondWithError(w, 400, "Something went wrong")
 	}
 
 	if len(c.Body) > 140 {
-		resBody["error"] = "Chirp is too long"
-		res, _ := json.Marshal(resBody)
-		w.WriteHeader(400)
-		w.Write(res)
+		respondWithError(w, 400, "Chirp is too long")
 	}
 
-	resBody["valid"] = true
-	res, _ := json.Marshal(resBody)
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
+	clean := []string{}
+	for _, word := range strings.Split(c.Body, " ") {
+		if slices.Contains([]string{"kerfuffle", "sharbert", "fornax"}, strings.ToLower(word)) {
+			clean = append(clean, "****")
+			continue
+		}
+		clean = append(clean, word)
+	}
+	cleaned := strings.Join(clean, " ")
+
+	type Resp struct {
+		CleanedBody string `json:"cleaned_body"`
+	}
+	res := Resp{CleanedBody: cleaned}
+	respondWithJSON(w, http.StatusOK, res)
 }

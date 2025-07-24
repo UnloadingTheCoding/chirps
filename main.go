@@ -8,6 +8,9 @@ import (
 	"github.com/unloadingthecoding/chirpy/handlers"
 )
 
+type payload interface {
+}
+
 func main() {
 
 	apiCfg := apiConfig{
