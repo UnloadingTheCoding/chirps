@@ -1,20 +1,31 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 	"sync/atomic"
 
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/unloadingthecoding/chirpy/handlers"
+	"github.com/unloadingthecoding/chirpy/internal/database"
 )
 
 type payload interface {
 }
 
 func main() {
+	godotenv.Load()
+
+	dbURL := os.Getenv("DB_URL")
+	db, _ := sql.Open("postgres", dbURL)
+	dbQueries := database.New(db)
 
 	apiCfg := apiConfig{
 		fileserverHits: atomic.Int32{},
+		database:       dbQueries,
 	}
 
 	mux := http.NewServeMux()
@@ -29,6 +40,7 @@ func main() {
 	mux.HandleFunc("GET /admin/metrics", apiCfg.hitCount)
 	mux.HandleFunc("POST /admin/reset", apiCfg.resetCount)
 	mux.HandleFunc("POST /api/validate_chirp", ValidateChirp)
+	mux.HandleFunc("POST /api/users", apiCfg.AddUser)
 
 	err := srv.ListenAndServe()
 
