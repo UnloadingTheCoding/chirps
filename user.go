@@ -5,18 +5,24 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/unloadingthecoding/chirpy/internal/auth"
+	"github.com/unloadingthecoding/chirpy/internal/database"
 )
 
 func (cfg *apiConfig) AddUser(w http.ResponseWriter, r *http.Request) {
-	type email struct {
-		Email string `json:"email"`
-	}
-
-	e := email{}
+	e := database.CreateUserParams{}
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&e)
 
-	user, err := cfg.database.CreateUser(r.Context(), e.Email)
+	hashed_pw, err := auth.HashPassword(e.HashedPassword)
+	if err != nil {
+
+	}
+
+	e.HashedPassword = hashed_pw
+
+	user, err := cfg.database.CreateUser(r.Context(), e)
 
 	if err != nil {
 		respondWithError(w, 500, fmt.Sprintf("Unable to generate user [db]: %s", err))

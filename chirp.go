@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"slices"
@@ -62,7 +61,7 @@ func (cfg *apiConfig) GetChirp(w http.ResponseWriter, r *http.Request) {
 	chirp, err := cfg.database.GetChirp(r.Context(), parsedID)
 
 	if err != nil {
-		msg := fmt.Sprintf("chirp not found")
+		msg := "chirp not found"
 		respondWithError(w, 404, msg)
 		return
 	}

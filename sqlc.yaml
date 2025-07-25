@@ -16,6 +16,8 @@ sql:
             go_struct_tag: 'json:"updated_at"'
           - column: "users.email"
             go_struct_tag: 'json:"email"'
+          - column: "users.hashed_password"
+            go_struct_tag: 'json:"hashed_password"'
 
           # Chirps table overrides
           - column: "chirps.id"
