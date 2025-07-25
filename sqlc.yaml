@@ -6,3 +6,25 @@ sql:
     gen:
       go:
         out: "internal/database"
+        overrides:
+          # User table overrides
+          - column: "users.id"
+            go_struct_tag: 'json:"id"'
+          - column: "users.created_at"
+            go_struct_tag: 'json:"created_at"'
+          - column: "users.updated_at"
+            go_struct_tag: 'json:"updated_at"'
+          - column: "users.email"
+            go_struct_tag: 'json:"email"'
+
+          # Chirps table overrides
+          - column: "chirps.id"
+            go_struct_tag: 'json:"id"'
+          - column: "chirps.created_at"
+            go_struct_tag: 'json:"created_at"'
+          - column: "chirps.updated_at"
+            go_struct_tag: 'json:"updated_at"'
+          - column: "chirps.body"
+            go_struct_tag: 'json:"body"'
+          - column: "chirps.user_id"
+            go_struct_tag: 'json:"user_id"'

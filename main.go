@@ -19,6 +19,7 @@ type payload interface {
 func main() {
 	godotenv.Load()
 
+	platform := os.Getenv("PLATFORM")
 	dbURL := os.Getenv("DB_URL")
 	db, _ := sql.Open("postgres", dbURL)
 	dbQueries := database.New(db)
@@ -26,6 +27,7 @@ func main() {
 	apiCfg := apiConfig{
 		fileserverHits: atomic.Int32{},
 		database:       dbQueries,
+		platform:       platform,
 	}
 
 	mux := http.NewServeMux()
@@ -38,8 +40,10 @@ func main() {
 	mux.Handle("GET /assets/", http.FileServer(http.Dir("./logo.png")))
 	mux.HandleFunc("GET /api/healthz", handlers.Healthzhandler)
 	mux.HandleFunc("GET /admin/metrics", apiCfg.hitCount)
-	mux.HandleFunc("POST /admin/reset", apiCfg.resetCount)
-	mux.HandleFunc("POST /api/validate_chirp", ValidateChirp)
+	mux.HandleFunc("POST /admin/reset", apiCfg.DeleteAllUsers)
+	mux.HandleFunc("POST /api/chirps", apiCfg.GenerateChirp)
+	mux.HandleFunc("GET /api/chirps", apiCfg.GetAllChirps)
+	mux.HandleFunc("GET /api/chirps/{chirpID}", apiCfg.GetChirp)
 	mux.HandleFunc("POST /api/users", apiCfg.AddUser)
 
 	err := srv.ListenAndServe()

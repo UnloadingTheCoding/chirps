@@ -9,4 +9,5 @@ import (
 type apiConfig struct {
 	fileserverHits atomic.Int32
 	database       *database.Queries
+	platform       string
 }
