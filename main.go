@@ -45,6 +45,7 @@ func main() {
 	mux.HandleFunc("GET /api/chirps", apiCfg.GetAllChirps)
 	mux.HandleFunc("GET /api/chirps/{chirpID}", apiCfg.GetChirp)
 	mux.HandleFunc("POST /api/users", apiCfg.AddUser)
+	mux.HandleFunc("POST /api/login", apiCfg.UserLogin)
 
 	err := srv.ListenAndServe()
 

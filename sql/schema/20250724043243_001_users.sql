@@ -21,3 +21,5 @@ SELECT 'down SQL query';
 DROP TABLE users;
 DROP TABLE chirps;
 -- +goose StatementEnd
+
+-- +goose add_password
